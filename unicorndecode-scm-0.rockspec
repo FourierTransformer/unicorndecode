@@ -1,4 +1,4 @@
-package = "unicorndecode"
+package = "unicornDecode"
 version = "scm-0"
 source = {
   url = "git://github.com/FourierTransformer/unicornDecode.git",
