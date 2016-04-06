@@ -55,7 +55,7 @@ local function unicornDecode(inputString)
 	-- SO MANY VARS!
 	local val, extraBytes, byteVal, extraByteVal
 	local inputLength = #inputString
-	print("inputLength", inputLength)
+	-- print("inputLength", inputLength)
 	local i = 1
 
 	-- PERF!
