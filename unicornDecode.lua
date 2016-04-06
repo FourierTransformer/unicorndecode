@@ -23,7 +23,7 @@ local info = {
     ]]
 }
 
-local load = require('load')
+local load = require('unidecode.load')
 local bit = require("bit")
 local bor, blshift, brshift = bit.bor, bit.lshift, bit.rshift
 
