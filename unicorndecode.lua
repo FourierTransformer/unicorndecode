@@ -1,7 +1,7 @@
 local info = {
-    _VERSION = 'unicornDecode scm-0',
+    _VERSION = 'unicorndecode scm-0',
     _DESCRIPTION = 'Unidecode for Lua',
-    _URL         = 'https://github.com/FourierTransformer/unicornDecode',
+    _URL         = 'https://github.com/FourierTransformer/unicorndecode',
     _LICENSE     = [[
         The MIT License (MIT)
         Copyright (c) 2016 Shakil Thakur
@@ -51,7 +51,7 @@ local function additionalBytes(val)
     end
 end
 
-local function unicornDecode(inputString)
+local function unicorndecode(inputString)
 	-- SO MANY VARS!
 	local val, extraBytes, byteVal, extraByteVal
 	local inputLength = #inputString
@@ -110,4 +110,4 @@ local function unicornDecode(inputString)
 	return table.concat(output), inputLength ~= (count-1)
 end
 
-return unicornDecode
+return unicorndecode
