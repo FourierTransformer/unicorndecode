@@ -1,4 +1,4 @@
-package = "unicornDecode"
+package = "unicorndecode"
 version = "scm-0"
 source = {
   url = "git://github.com/FourierTransformer/unicornDecode.git",
@@ -18,7 +18,7 @@ dependencies = {
 build = {
   type = "builtin",
   modules = {
-    ["unicornDecode"] = "unicornDecode.lua",
+    ["unicorndecode"] = "unicorndecode.lua",
     ["unidecode.load"] = "unidecode/load.lua",
 
     -- is having this many files bad?

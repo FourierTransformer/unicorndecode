@@ -115,6 +115,10 @@ else
     end
 end
 
+local function trim(s)
+  return s:match'^()%s*$' and '' or s:match'^%s*(.*%S)'
+end
+
 function unicorndecode.decode(inputString)
     -- SO MANY VARS!
     local val, extraBytes, byteVal, extraByteVal
@@ -137,7 +141,8 @@ function unicorndecode.decode(inputString)
     end
 
     -- concat the string together!
-    return table.concat(output), inputLength ~= (count)
+    local final = table.concat(output)
+    return trim(final), inputLength ~= (count)
 end
 
 return unicorndecode
