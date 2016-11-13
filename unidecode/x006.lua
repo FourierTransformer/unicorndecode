@@ -254,5 +254,6 @@ local data = {
 'Gh',    --0xfc
 '&',    --0xfd
 '+m',    --0xfe
+'',    --0xff
 }
 return data

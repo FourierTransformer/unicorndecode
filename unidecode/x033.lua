@@ -254,5 +254,6 @@ local data = {
 '29d',    --0xfc
 '30d',    --0xfd
 '31d',    --0xfe
+'32d',    --0xff
 }
 return data

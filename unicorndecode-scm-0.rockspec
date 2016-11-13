@@ -13,8 +13,7 @@ description = {
   license = "MIT"
 }
 dependencies = {
-  "lua >= 5.1, < 5.3",
-  "luabitop"
+  "lua >= 5.1, < 5.4"
 }
 build = {
   type = "builtin",

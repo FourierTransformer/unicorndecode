@@ -254,5 +254,6 @@ local data = {
 '',    --0xfc
 '"',    --0xfd
 '"',    --0xfe
+'',    --0xff
 }
 return data

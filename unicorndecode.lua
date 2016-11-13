@@ -1,4 +1,4 @@
-local info = {
+local unicorndecode = {
     _VERSION = 'unicorndecode scm-0',
     _DESCRIPTION = 'Unidecode for Lua',
     _URL         = 'https://github.com/FourierTransformer/unicorndecode',
@@ -23,91 +23,121 @@ local info = {
     ]]
 }
 
-local load = require('unidecode.load')
-local bit = require("bit")
-local bor, blshift, brshift = bit.bor, bit.lshift, bit.rshift
+-- get the lua version (this is later used for compat)
+local luaver = tonumber(_VERSION:sub(5))
 
--- load up the unicode magic perl tables!
+-- figure out which files need to be loaded
+local load = require('unidecode.load')
+
+-- load up the unicode magic python/perl tables!
 local unicodeMagics = {}
 for i = 1, #load do
-	unicodeMagics[tonumber(load[i]:sub(2), 16)] = require('unidecode.' .. load[i])
+    unicodeMagics[tonumber(load[i]:sub(2), 16)] = require('unidecode.' .. load[i])
+    local count = #unicodeMagics[tonumber(load[i]:sub(2), 16)]
+    if count ~= 256 then print(load[i]) end
 end
 
 -- create a fallback mechanism... (just returns '[?]')
 local backupTable = setmetatable({}, {__index = function() return '[?]' end})
 setmetatable(unicodeMagics, {__index = function() return backupTable end})
 
--- determines how many additional bytes are needed to parse the unicode char
--- NOTE: assumes the UTF-8 input is clean - which gets dangerous.
-local function additionalBytes(val)
-    if val >= 240 then
-        return 3, 240
-    elseif val >= 224 then
-        return 2, 224
-    elseif val >= 192 then
-        return 1, 192
-    else
-        return 0
+-- luajit has a bit module builtin and returns luaver 5.1
+-- for lua 5.1, luabitop would need to be installed
+local bor, blshift, brshift
+if luaver == 5.1 then
+    bit = require("bit")
+    bor, blshift, brshift = bit.bor, bit.lshift, bit.rshift
+elseif luaver == 5.2 then
+    bor, blshift, brshift = bit32.bor, bit32.lshift, bit32.rshift    
+end
+
+-- load up utf8.codes. In lua 5.3+ this is baked in, otherwise the lua function provides
+-- similar functionality
+local utf8codes
+if luaver > 5.2 then
+    utf8codes = utf8.codes
+else
+    -- declare the function!
+    utf8codes = function(inputString)
+
+        -- determines how many additional bytes are needed to parse the unicode char
+        -- NOTE: assumes the UTF-8 input is clean - which gets dangerous.
+        local function additionalBytes(val)
+            if val >= 240 then
+                return 3, 240
+            elseif val >= 224 then
+                return 2, 224
+            elseif val >= 192 then
+                return 1, 192
+            else
+                return 0, 0
+            end
+        end
+
+        -- PERF!
+        local sbyte = string.byte
+        local i, startI = 1, 1
+        local val
+
+        return function()
+            -- the beginning is returned...
+            startI = i
+
+            -- get the byte value of the current char
+            val = sbyte(inputString, i)
+            if not val then return nil end
+
+            -- figure out how many additional bytes are needed
+            extraBytes, byteVal = additionalBytes(val)
+
+            -- if there are additional bytes this is UTF-8!
+            -- remove the preceding 1's in binary
+            val = val - byteVal
+            -- print("val", val)
+
+            -- add each additional byte to get the unicode value
+            --[[ ex: for the two byte unicode value (in binary):
+                110xxxxx 10yyyyyy
+                has the unicdoe value: xxxxxyyyyyy
+            ]]
+            for j = 1, extraBytes do
+                extraByteVal = sbyte(inputString, i+j)
+                -- print("extraByteVal", extraByteVal)
+                extraByteVal = extraByteVal - 128 --remove the header byte
+                val = bor(blshift(val, 6), extraByteVal) --combines it
+            end
+
+
+            i = i + 1 + extraBytes
+
+            return startI, val
+        end
     end
 end
 
-local function unicorndecode(inputString)
-	-- SO MANY VARS!
-	local val, extraBytes, byteVal, extraByteVal
-	local inputLength = #inputString
-	-- print("inputLength", inputLength)
-	local i = 1
+function unicorndecode.decode(inputString)
+    -- SO MANY VARS!
+    local val, extraBytes, byteVal, extraByteVal
+    local inputLength = #inputString
+    -- print("inputLength", inputLength)
 
-	-- PERF!
-	local sbyte, schar = string.byte, string.char
+    -- STRING BUILDER!
+    local output = {}
+    local count = 0
 
-	-- LUA's STRING BUILDER!
-	local output = {}
-	local count = 1
+    -- iterate over the string
+    for p, c in utf8codes(inputString) do
+        -- print(p, c)
+        -- add the equivalent ascii char to the output
+        count = count + 1
+        if count == 4933 then
+            print(p, c)
+        end
+        output[count] = unicodeMagics[math.floor(c/256)][(c % 256)+1]
+    end
 
-	-- iterate over the entire input string
-	while i <= inputLength do
-
-		-- get the byte value of the current char
-	    val = sbyte(inputString, i)
-
-	    -- figure out how manu additional bytes are needed
-	    extraBytes, byteVal = additionalBytes(val)
-	    -- print("extraBytes", extraBytes, val)
-
-	    -- if there are additional bytes this is UTF-8!
-	    if extraBytes > 0 then
-	    	-- remove the preceding 1's in binary
-	        val = val - byteVal
-	        -- print("val", val)
-
-	        -- add each additional byte to get the unicode value
-	        --[[ ex: for the two byte unicode value (in binary):
-				110xxxxx 10yyyyyy
-				has the unicdoe value: xxxxxyyyyyy
-	        ]]
-	        for j = 1, extraBytes do
-	            extraByteVal = sbyte(inputString, i+j)
-	            -- print("extraByteVal", extraByteVal)
-	            extraByteVal = extraByteVal - 128 --remove the header byte
-	            val = bor(blshift(val, 6), extraByteVal) --combines it
-	        end
-
-	        -- add the equivalent ascii char to the output
-	        output[count] = unicodeMagics[brshift(val, 8)][(val % 256) + 1]
-	        count = count + 1
-	        i = i + 1 + extraBytes
-
-	    -- otherwise it's just ASCII
-	    else
-	        output[count] = schar(val)
-	        count = count + 1
-	        i = i + 1
-	    end
-	end
-
-	-- concat the string together!
-	return table.concat(output), inputLength ~= (count-1)
+    -- concat the string together!
+    return table.concat(output), inputLength ~= (count)
 end
 
 return unicorndecode
