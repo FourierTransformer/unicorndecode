@@ -142,7 +142,7 @@ function unicorndecode.decode(inputString)
 
     -- concat the string together!
     local final = table.concat(output)
-    return trim(final), inputLength ~= (count)
+    return trim(final), inputLength ~= (count) -- this is more of a byte count than anything
 end
 
 return unicorndecode
