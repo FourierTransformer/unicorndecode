@@ -21,7 +21,7 @@ script:
   - busted --verbose --coverage
 
 after_success:
-  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/env
+  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/env --exclude unidecode/
 
 branches:
   except:

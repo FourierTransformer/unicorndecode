@@ -134,9 +134,6 @@ function unicorndecode.decode(inputString)
         -- print(p, c)
         -- add the equivalent ascii char to the output
         count = count + 1
-        if count == 4933 then
-            print(p, c)
-        end
         output[count] = unicodeMagics[math.floor(c/256)][(c % 256)+1]
     end
 
