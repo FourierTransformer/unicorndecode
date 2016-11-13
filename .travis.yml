@@ -17,15 +17,11 @@ before_install:
   - luarocks install luacov-coveralls
   - ./spec/luabitop-on-51.sh
 
-install:
-  - luarocks make # Install the rock, assuming there is a rockspec
-                  # in the root of the repository.
-
 script:
   - busted --verbose --coverage
 
 after_success:
-  - luacov-coveralls --include unicorndecode
+  - luacov-coveralls --exclude $TRAVIS_BUILD_DIR/env
 
 branches:
   except:
