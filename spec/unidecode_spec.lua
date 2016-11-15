@@ -4,8 +4,7 @@ local unidecodeTest = {
     {"Brontë", "Bronte"},
     {"Herp", "Herp"},
     {"北亰", "Bei Jing"},
-    {"læti", "laeti"},
-    {"𝔓", "P"},
+    {"læti", "laeti"}
 }
 
 describe("unicorndecode", function()

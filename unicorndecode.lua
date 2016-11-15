@@ -26,16 +26,8 @@ local unicorndecode = {
 -- get the lua version (this is later used for compat)
 local luaver = tonumber(_VERSION:sub(5))
 
--- figure out which files need to be loaded
-local load = require('unidecode.load')
-
 -- load up the unicode magic python/perl tables!
-local unicodeMagics = {}
-for i = 1, #load do
-    unicodeMagics[tonumber(load[i]:sub(2), 16)] = require('unidecode.' .. load[i])
-    local count = #unicodeMagics[tonumber(load[i]:sub(2), 16)]
-    if count ~= 256 then print(load[i]) end
-end
+local unicodeMagics = require('unidecode_data')
 
 -- create a fallback mechanism... (just returns '[?]')
 local backupTable = setmetatable({}, {__index = function() return '[?]' end})
@@ -61,10 +53,14 @@ else
     utf8codes = function(inputString)
 
         -- determines how many additional bytes are needed to parse the unicode char
-        -- NOTE: assumes the UTF-8 input is clean - which gets dangerous.
+        -- NOTE: assumes the UTF-8 input is clean - which may get dangerous.
         local function additionalBytes(val)
-            if val >= 240 then
-                return 3, 240
+            if val >= 252 then
+                return 5, 252
+            elseif val >= 248 then
+                return 4, 248
+            elseif val >= 240 then
+                return 3, 240    
             elseif val >= 224 then
                 return 2, 224
             elseif val >= 192 then
