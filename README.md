@@ -2,10 +2,11 @@
 [![Build Status](https://travis-ci.org/FourierTransformer/unicorndecode.svg?branch=master)](https://travis-ci.org/FourierTransformer/unicorndecode) [![Coverage Status](https://coveralls.io/repos/github/FourierTransformer/unicorndecode/badge.svg?branch=master)](https://coveralls.io/github/FourierTransformer/unicorndecode?branch=master)
 
 
-unicorndecode is a port of the [Text::Unicode](http://search.cpan.org/perldoc/Text::Unidecode) perl library into lua. It attempts to take unicode characters and represent them in ASCII. It does this by removing accents or transliterating other languages into Roman characters - which can occasionally work well and sometimes not so well. I mainly use it for removing accents on Roman characters.
+unicorndecode is a port of the [Text::Unicode](http://search.cpan.org/perldoc/Text::Unidecode) perl library into lua. It attempts to take unicode characters and represent them in ASCII. It does this by removing accents or transliterating other languages into Roman characters - which can occasionally work well and sometimes not so well!
 
 ## Installing
 unicorndecode is installed via luarocks:
+It works out of the box with Lua 5.2/5.3, LuaJIT 2.0/2.1 and will work with Lua 5.1 if [luabitop](https://luarocks.org/modules/luarocks/luabitop) is installed.
 
 ```
 luarocks install unicorndecode

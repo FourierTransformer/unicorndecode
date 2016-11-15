@@ -1,5 +1,5 @@
 local unicorndecode = {
-    _VERSION = 'unicorndecode scm-0',
+    _VERSION = 'unicorndecode 1.0.0',
     _DESCRIPTION = 'Unidecode for Lua',
     _URL         = 'https://github.com/FourierTransformer/unicorndecode',
     _LICENSE     = [[
@@ -55,11 +55,14 @@ else
         -- determines how many additional bytes are needed to parse the unicode char
         -- NOTE: assumes the UTF-8 input is clean - which may get dangerous.
         local function additionalBytes(val)
-            if val >= 252 then
-                return 5, 252
-            elseif val >= 248 then
-                return 4, 248
-            elseif val >= 240 then
+            -- these don't really exist yet...
+            -- and are definitely not in the data tables...
+            -- if val >= 252 then
+            --     return 5, 252
+            -- elseif val >= 248 then
+            --     return 4, 248
+            -- elseif val >= 240 then
+            if val >= 240 then
                 return 3, 240    
             elseif val >= 224 then
                 return 2, 224
