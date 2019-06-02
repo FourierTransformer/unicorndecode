@@ -1,8 +1,8 @@
 package = "unicorndecode"
-version = "1.0.0-1"
+version = "1.0.1-1"
 source = {
   url = "git://github.com/FourierTransformer/unicorndecode.git",
-  tag = "1.0.0"
+  tag = "1.0.1"
 }
 description = {
   summary = "Unidecode for Lua",

@@ -1,10 +1,10 @@
 local unicorndecode = {
-    _VERSION = 'unicorndecode 1.0.0',
+    _VERSION = 'unicorndecode 1.0.1',
     _DESCRIPTION = 'Unidecode for Lua',
     _URL         = 'https://github.com/FourierTransformer/unicorndecode',
     _LICENSE     = [[
         The MIT License (MIT)
-        Copyright (c) 2016 Shakil Thakur
+        Copyright (c) 2016-2019 Shakil Thakur
         Permission is hereby granted, free of charge, to any person obtaining a copy
         of this software and associated documentation files (the "Software"), to deal
         in the Software without restriction, including without limitation the rights
